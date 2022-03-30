@@ -1,5 +1,7 @@
+const fetch = require('node-fetch');
+
 class WebHookController {
-    GetIndex = (req, res) => {
+    GetIndex = async (req, res) => {
         const {
             body: { payload },
             query,
@@ -10,6 +12,17 @@ class WebHookController {
             query,
             params,
         });
+        if (payload['web_hook_payload'][0].site === 'vlipa') {
+            const data = await (
+                await fetch(
+                    'https://api.netlify.com/build_hooks/624416a13ea1225ba5a5264f'
+                )
+            ).json();
+            console.log(
+                '🚀 ~ file: web-hook.js ~ line 21 ~ WebHookController ~ GetIndex= ~ data',
+                data
+            );
+        }
         res.status(200).json({ body, query, params });
     };
     PostIndex = (req, res) => {
