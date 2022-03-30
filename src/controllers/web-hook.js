@@ -1,6 +1,10 @@
 class WebHookController {
-    getIndex = (req, res) => {
-        res.status(200).end('web-hook');
+    GetIndex = (req, res) => {
+        res.status(200).json({ body, query, params });
+    };
+    PostIndex = (req, res) => {
+        const { body, query, params } = req;
+        res.status(200).json({ body, query, params });
     };
 }
 
