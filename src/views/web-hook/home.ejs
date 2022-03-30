@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web hook dashboard</title>
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/web-hook-home.css" />
+</head>
+
+<body>
+  <main class="container">
+    <div class="heading">
+      <h1 class="heading-title">Web hook manager</h1>
+    </div>
+    <div class="content">
+      <div class="block">
+        <table class="block-table">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Trigger URL</th>
+            <th>Status</th>
+          </tr>
+          <% data.forEach(({hook_id, name, trigger_url, status}) => { %>
+          <tr>
+            <td><code><%= hook_id %></code></td>
+            <td><%= name %></td>
+            <td><%= trigger_url %></td>
+            <td style="text-align: center;">
+              <input type="checkbox" data-id="<%= hook_id %>" <%= status && 'checked' %> name="status">
+            </td>
+          </tr>
+          <% }) %>
+        </table>
+      </div>
+    </div>
+    <a href="/add" class="btn-fixed">
+      <i class="fa-solid fa-plus"></i>
+    </a>
+  </main>
+
+  <script src="https://kit.fontawesome.com/9946e2834f.js" crossorigin="anonymous"></script>
+  <script>
+    (() => {
+      const handleGetDomEle = (selector) => document.querySelectorAll(selector);
+      const API_URL = '/api/web-hook';
+
+      window.addEventListener('load', () => {
+        const statusInputEle = handleGetDomEle('input[name=status]');
+        statusInputEle.forEach((element) => {
+          element.addEventListener('change', async (e) => {
+            const {
+              target
+            } = e;
+            const data = {
+              status: target.checked,
+              hook_id: target.dataset.id
+            };
+            const config = {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data)
+            };
+
+            try {
+              await fetch(API_URL, config);
+            } catch (error) {
+              console.warn(error);
+            }
+          })
+        })
+      })
+    })()
+  </script>
+</body>
+
+</html>
