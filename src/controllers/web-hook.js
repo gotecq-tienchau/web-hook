@@ -15,7 +15,8 @@ class WebHookController {
         if (payload['web_hook_payload'][0].site === 'vlipa') {
             const data = await (
                 await fetch(
-                    'https://api.netlify.com/build_hooks/624416a13ea1225ba5a5264f'
+                    'https://api.netlify.com/build_hooks/624416a13ea1225ba5a5264f',
+                    { method: 'POST' }
                 )
             ).json();
             console.log(
@@ -23,7 +24,7 @@ class WebHookController {
                 data
             );
         }
-        res.status(200).json({ body, query, params });
+        res.status(200).json({ payload, query, params });
     };
     PostIndex = (req, res) => {
         const {
@@ -36,7 +37,7 @@ class WebHookController {
             query,
             params,
         });
-        res.status(200).json({ body, query, params });
+        res.status(200).json({ payload, query, params });
     };
 }
 
