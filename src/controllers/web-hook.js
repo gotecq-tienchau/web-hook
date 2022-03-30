@@ -23,10 +23,7 @@ class WebHookController {
         switch (web_hook_payload.site) {
             case WebHookList[web_hook_payload.site]:
                 const path = WebHookList[web_hook_payload.site]?.requestURL;
-                console.log(
-                    web_hook_payload.site,
-                    WebHookList[web_hook_payload.site]
-                );
+                console.log(web_hook_payload);
                 url = path;
                 break;
         }
