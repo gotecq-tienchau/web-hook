@@ -51,7 +51,22 @@ class WebHookController {
     };
 
     AddHook = async (req, res) => {
-        return res.status(200).end();
+        const {
+            hook_id = false,
+            name = false,
+            trigger_url = false,
+            status = false,
+        } = req.body;
+        if ((hook_id || name || trigger_url) === false)
+            return res.status(500).end('Please input all fields!');
+        try {
+            const data = { hook_id, name, trigger_url, status };
+            const dataResponse = await HooksModel.create(data);
+            return res.status(200).json(dataResponse).end();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).end('Error!');
+        }
     };
 }
 

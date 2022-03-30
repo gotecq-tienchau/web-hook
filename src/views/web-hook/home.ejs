@@ -23,6 +23,7 @@
             <th>Name</th>
             <th>Trigger URL</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
           <% data.forEach(({hook_id, name, trigger_url, status}) => { %>
           <tr>
@@ -32,17 +33,61 @@
             <td style="text-align: center;">
               <input type="checkbox" data-id="<%= hook_id %>" <%= status && 'checked' %> name="status">
             </td>
+            <td class="table-row-action">
+              <i class="fa-solid fa-pen-to-square"></i>
+              <i class="fa-solid fa-trash"></i>
+            </td>
           </tr>
           <% }) %>
         </table>
       </div>
     </div>
-    <a href="/add" class="btn-fixed">
+    <a href="#" class="btn-fixed" id="js-modal-action">
       <i class="fa-solid fa-plus"></i>
     </a>
   </main>
 
+  <!-- Modal -->
+  <div class="modal-wrap-overlay" id="js-modal-wrap">
+    <div class="modal">
+      <div class="modal-heading">
+        <h2 class="modal-heading-text">Add hook</h2>
+      </div>
+      <div class="modal-content">
+        <form method="post" class="modal-form" id="js-form">
+          <table class="form-table">
+            <tr class="form-group">
+              <th><label for="hook_id" class="form-label">Hook Id </label></th>
+              <td><input type="text" disabled id="hook_id" class="form-input" placeholder="Generating id ..."></td>
+            </tr>
+            <tr class="form-group">
+              <th><label for="hook_name" class="form-label">Hook Name <span class="text-alert">*</span></label></th>
+              <td><input type="text" id="hook_name" class="form-input" placeholder="Enter some text..."></td>
+            </tr>
+            <tr class="form-group">
+              <th>
+                <label for="hook_trigger_url" class="form-label">Hook Trigger URL <span class="text-alert">*</span></label>
+              </th>
+              <td><input type="text" id="hook_trigger_url" class="form-input" placeholder="Enter some text..."></td>
+            </tr>
+            <tr class="form-group">
+              <th><label for="hook_status" class="form-label">Hook Active </label></th>
+              <td><input type="checkbox" id="hook_status" class="form-checkbox" placeholder="Enter some text..."></td>
+            </tr>
+          </table>
+          <p class="form-message text-alert" id="js-form-message">* Please fill all require fields!</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn primary" id="js-form-submit" type="button">Submit</button>
+        <button class="modal-btn danger" id="js-form-cancel" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <!-- End modal -->
+
   <script src="https://kit.fontawesome.com/9946e2834f.js" crossorigin="anonymous"></script>
+  <!-- Main script -->
   <script>
     (() => {
       const handleGetDomEle = (selector) => document.querySelectorAll(selector);
@@ -77,6 +122,77 @@
       })
     })()
   </script>
+  <!-- End main script -->
+
+  <!-- Modal script -->
+  <script>
+    (() => {
+      const handleGetDomEle = (selector) => document.querySelector(selector);
+      const handleGenerateId = async () => (await (await fetch('/api/generate-id')).json()).id
+
+      window.addEventListener('load', async () => {
+        const generateId = await handleGenerateId();
+        const modalWrapEle = handleGetDomEle('#js-modal-wrap')
+        const modalActionEle = handleGetDomEle('#js-modal-action');
+        const modalCloseEle = handleGetDomEle('#js-form-cancel');
+        const formEle = handleGetDomEle('#js-form');
+        const formInputIdEle = handleGetDomEle('[id="hook_id"]');
+        const formInputNameEle = handleGetDomEle('[id="hook_name"]');
+        const formInputTriggerSiteEle = handleGetDomEle('[id="hook_trigger_url"]');
+        const formInputStatusEle = handleGetDomEle('[id="hook_status"]');
+        formInputIdEle.value = generateId;
+
+        const formSubmitBtnEle = handleGetDomEle('#js-form-submit');
+        const formCancelBtnEle = handleGetDomEle('#js-form-cancel');
+
+        modalActionEle.addEventListener('click', async (e) => {
+          e.preventDefault();
+          modalWrapEle.classList.toggle('active');
+        });
+
+        modalCloseEle.addEventListener('click', async (e) => {
+          modalWrapEle.classList.remove('active');
+        });
+
+        formSubmitBtnEle.addEventListener("click", async () => {
+          if (!formInputNameEle.value || !formInputTriggerSiteEle.value) {
+            handleGetDomEle('#js-form-message').classList.add('active');
+            return;
+          } else {
+            handleGetDomEle('#js-form-message').classList.remove('active');
+          }
+
+          const data = {
+            hook_id: formInputIdEle.value,
+            name: formInputNameEle.value,
+            trigger_url: formInputTriggerSiteEle.value,
+            status: formInputStatusEle.checked
+          }
+
+          const config = {
+            method: 'OPTIONS',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          }
+
+          try {
+            const dataResponse = await (await fetch('/api/web-hook', config)).json();
+            console.log("🚀 ~ file: home.ejs ~ line 168 ~ formSubmitBtnEle.addEventListener ~ dataResponse", dataResponse);
+
+            formEle.reset()
+            formInputIdEle.value = await handleGenerateId();
+            modalWrapEle.classList.remove('active');
+            location.reload();
+          } catch (error) {
+            console.log("🚀 ~ file: home.ejs ~ line 175 ~ formSubmitBtnEle.addEventListener ~ error", error)
+          }
+        })
+      })
+    })()
+  </script>
+  <!-- End modal script -->
 </body>
 
 </html>
