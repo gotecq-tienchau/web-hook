@@ -19,7 +19,7 @@ class WebHookController {
             return res.status(400).end();
         }
         const { web_hook_payload } = req.body?.payload;
-        const url = '';
+        let url = '';
         switch (web_hook_payload.site) {
             case WebHookList[web_hook_payload.site]:
                 const path = WebHookList[web_hook_payload.site]?.requestURL;
