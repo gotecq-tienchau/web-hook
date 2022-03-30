@@ -5,7 +5,11 @@ class WebHookController {
             query,
             params,
         } = req;
-        console.log('🚀 GET', { payload, query, params });
+        console.log('🚀 GET', {
+            payload: JSON.stringify(payload, null, 4),
+            query,
+            params,
+        });
         res.status(200).json({ body, query, params });
     };
     PostIndex = (req, res) => {
@@ -14,7 +18,11 @@ class WebHookController {
             query,
             params,
         } = req;
-        console.log('🚀 POST', { payload, query, params });
+        console.log('🚀 POST', {
+            payload: JSON.stringify(payload, null, 4),
+            query,
+            params,
+        });
         res.status(200).json({ body, query, params });
     };
 }
