@@ -26,7 +26,7 @@ class WebHookController {
                     web_hook_payload.site,
                     WebHookList[web_hook_payload.site]
                 );
-                await URLRequest(
+                await URLRequest.post(
                     url ? url : 'https://jsonplaceholder.typicode.com/todos/1'
                 );
                 break;
