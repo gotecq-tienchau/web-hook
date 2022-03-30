@@ -19,24 +19,22 @@ class WebHookController {
             return res.status(400).end();
         }
         const { web_hook_payload } = req.body?.payload;
+        const url = '';
         switch (web_hook_payload.site) {
             case WebHookList[web_hook_payload.site]:
-                const url = WebHookList[web_hook_payload.site]?.requestURL;
+                const path = WebHookList[web_hook_payload.site]?.requestURL;
                 console.log(
                     web_hook_payload.site,
                     WebHookList[web_hook_payload.site]
                 );
-                URLRequest.post(
-                    url ? url : 'https://jsonplaceholder.typicode.com/todos/1'
-                ).then((resp) => {
-                    console.log('response from request');
-                });
-                break;
-            default:
-                res.status(404).end();
+                url = path;
                 break;
         }
-        res.status(200).end();
+        if (url) {
+            const resp = await URLRequest.post(url);
+            console.log(resp);
+        }
+        res.status(418).end();
     };
 
     PostIndex = (req, res) => {
