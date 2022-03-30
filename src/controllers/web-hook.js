@@ -13,12 +13,10 @@ class WebHookController {
             params,
         });
         if (payload['web_hook_payload'][0].site === 'vlipa') {
-            const data = await (
-                await fetch(
-                    'https://api.netlify.com/build_hooks/624416a13ea1225ba5a5264f',
-                    { method: 'POST' }
-                )
-            ).json();
+            const data = await fetch(
+                'https://api.netlify.com/build_hooks/624416a13ea1225ba5a5264f',
+                { method: 'POST' }
+            );
             console.log(
                 '🚀 ~ file: web-hook.js ~ line 21 ~ WebHookController ~ GetIndex= ~ data',
                 data
