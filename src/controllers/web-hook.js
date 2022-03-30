@@ -26,9 +26,11 @@ class WebHookController {
                     web_hook_payload.site,
                     WebHookList[web_hook_payload.site]
                 );
-                await URLRequest.post(
+                URLRequest.post(
                     url ? url : 'https://jsonplaceholder.typicode.com/todos/1'
-                );
+                ).then((resp) => {
+                    console.log('response from request');
+                });
                 break;
             default:
                 res.status(404).end();
