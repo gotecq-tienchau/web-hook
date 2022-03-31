@@ -4,10 +4,10 @@ const HooksModel = require('../../models/hooks');
 
 class WebHookController {
     GetIndex = async (req, res) => {
-        if (Array.isArray(req.body?.payload)) {
-            web_hook_payload = req.body?.payload.shift().web_hook_payload;
-        }
-        let { web_hook_payload } = req.body.payload;
+        let payload = req.body?.payload || false;
+        if (!payload) return res.status(400).end();
+        if (Array.isArray(payload)) payload = payload.shift();
+        let { web_hook_payload } = payload;
         if (!web_hook_payload) return res.status(400).end();
 
         (async (resolve) => {
@@ -22,10 +22,11 @@ class WebHookController {
     };
 
     PostIndex = async (req, res) => {
-        if (!req.body?.payload?.web_hook_payload) {
-            return res.status(400).end();
-        }
-        const { web_hook_payload } = req.body?.payload;
+        let payload = req.body?.payload || false;
+        if (!payload) return res.status(400).end();
+        if (Array.isArray(payload)) payload = payload.shift();
+        let { web_hook_payload } = payload;
+        if (!web_hook_payload) return res.status(400).end();
 
         (async (resolve) => {
             await web_hook_payload?.forEach(async (entity) => {
@@ -34,7 +35,7 @@ class WebHookController {
             });
             resolve();
         })(() => {
-            res.status(200).end();
+            return res.status(200).end();
         });
     };
 
