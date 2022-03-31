@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web hook dashboard</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/reset.css" />
   <link rel="stylesheet" href="css/web-hook-home.css" />
 </head>
@@ -34,7 +35,7 @@
               <input type="checkbox" data-id="<%= hook_id %>" <%= status && 'checked' %> name="status">
             </td>
             <td class="table-row-action">
-              <i class="fa-solid fa-pen-to-square js-edit-btn" data-hook-id="<%= hook_id %>"></i>
+              <!-- <i class="fa-solid fa-pen-to-square js-edit-btn" data-hook-id="<%= hook_id %>"></i> -->
               <i class="fa-solid fa-trash js-delete-btn" data-hook-id="<%= hook_id %>"></i>
             </td>
           </tr>
