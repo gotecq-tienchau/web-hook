@@ -7,7 +7,7 @@ class WebHookController {
         let payload = req.body?.payload || false;
         if (!payload) return res.status(400).end();
         if (Array.isArray(payload)) payload = payload.shift();
-        let { web_hook_payload } = payload;
+        const { web_hook_payload } = payload;
         if (!web_hook_payload) return res.status(400).end();
 
         (async (resolve) => {
@@ -25,17 +25,27 @@ class WebHookController {
         let payload = req.body?.payload || false;
         if (!payload) return res.status(400).end();
         if (Array.isArray(payload)) payload = payload.shift();
-        let { web_hook_payload } = payload;
+        const { web_hook_payload } = payload;
         if (!web_hook_payload) return res.status(400).end();
 
         (async (resolve) => {
-            await web_hook_payload?.forEach(async (entity) => {
-                const hook = await HooksModel.findOne({ hook_id: entity.site });
-                hook.status && (await URLRequest.post(hook.trigger_url));
-            });
-            resolve();
-        })(() => {
-            return res.status(200).end();
+            try {
+                await web_hook_payload?.forEach(async (entity) => {
+                    const hook = await HooksModel.findOne({
+                        hook_id: entity.site,
+                    });
+                    hook.status && (await URLRequest.post(hook.trigger_url));
+                });
+                resolve();
+            } catch (error) {
+                resolve(error);
+            }
+        })((error) => {
+            console.log(
+                '🚀 ~ file: web-hook.js ~ line 44 ~ WebHookController ~ error',
+                error
+            );
+            return error ? res.status(510).end('error') : res.status(200).end();
         });
     };
 
