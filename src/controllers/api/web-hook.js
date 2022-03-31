@@ -6,8 +6,8 @@ class WebHookController {
     GetIndex = async (req, res) => {
         let { web_hook_payload = false } = req.body?.payload;
 
-        if (Array.isArray(req.body?.payload?.web_hook_payload)) {
-            web_hook_payload = web_hook_payload.shift();
+        if (web_hook_payload[0].id) {
+            web_hook_payload = web_hook_payload.shift().web_hook_payload;
         }
         if (!req.body?.payload?.web_hook_payload) {
             return res.status(400).end();
