@@ -7,7 +7,7 @@ class WebHookController {
         // let { web_hook_payload = false } = req.body?.payload;
         console.log(
             '🚀 ~ file: web-hook.js ~ line 8 ~ WebHookController ~ GetIndex= ~ web_hook_payload',
-            req.body?.payload?.web_hook_payload
+            req.body?.payload
         );
 
         // if (web_hook_payload[0]?.id) {
