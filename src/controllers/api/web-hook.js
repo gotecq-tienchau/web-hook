@@ -3,6 +3,10 @@ const HooksModel = require('../../models/hooks');
 
 class WebHookController {
     GetIndex = async (req, res) => {
+        console.log(
+            '🚀 ~ file: web-hook.js ~ line 10 ~ WebHookController ~ GetIndex= ~ web_hook_payload',
+            req.body?.payload
+        );
         if (!req.body?.payload?.web_hook_payload) {
             return res.status(400).end();
         }
