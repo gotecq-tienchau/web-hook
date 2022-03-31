@@ -1,3 +1,4 @@
+const { json } = require('express');
 const URLRequest = require('../../access/index');
 const HooksModel = require('../../models/hooks');
 
@@ -5,7 +6,7 @@ class WebHookController {
     GetIndex = async (req, res) => {
         console.log(
             '🚀 ~ file: web-hook.js ~ line 10 ~ WebHookController ~ GetIndex= ~ web_hook_payload',
-            req.body?.payload
+            JSON.stringify(req.body?.payload, null, 2)
         );
         if (!req.body?.payload?.web_hook_payload) {
             return res.status(400).end();
