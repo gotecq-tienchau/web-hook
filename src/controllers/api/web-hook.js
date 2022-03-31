@@ -4,14 +4,14 @@ const HooksModel = require('../../models/hooks');
 
 class WebHookController {
     GetIndex = async (req, res) => {
-        console.log(
-            '🚀 ~ file: web-hook.js ~ line 10 ~ WebHookController ~ GetIndex= ~ web_hook_payload',
-            JSON.stringify(req.body?.payload, null, 2)
-        );
+        let { web_hook_payload = false } = req.body?.payload;
+
+        if (Array.isArray(req.body?.payload?.web_hook_payload)) {
+            web_hook_payload = web_hook_payload.shift();
+        }
         if (!req.body?.payload?.web_hook_payload) {
             return res.status(400).end();
         }
-        const { web_hook_payload } = req.body?.payload;
 
         (async (resolve) => {
             await web_hook_payload?.forEach(async (entity) => {
