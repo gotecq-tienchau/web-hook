@@ -162,3 +162,7 @@ code {
     background-color: rgba(180, 180, 180, 0.26);
     font-size: 1.2em;
 }
+
+.text-center {
+    text-align: center;
+}

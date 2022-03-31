@@ -19,7 +19,7 @@
       <div class="block">
         <table class="block-table">
           <tr>
-            <th>ID</th>
+            <th class="text-center">Key</th>
             <th>Name</th>
             <th>Trigger URL</th>
             <th>Status</th>
@@ -34,8 +34,8 @@
               <input type="checkbox" data-id="<%= hook_id %>" <%= status && 'checked' %> name="status">
             </td>
             <td class="table-row-action">
-              <i class="fa-solid fa-pen-to-square"></i>
-              <i class="fa-solid fa-trash"></i>
+              <i class="fa-solid fa-pen-to-square js-edit-btn" data-hook-id="<%= hook_id %>"></i>
+              <i class="fa-solid fa-trash js-delete-btn" data-hook-id="<%= hook_id %>"></i>
             </td>
           </tr>
           <% }) %>
@@ -58,7 +58,12 @@
           <table class="form-table">
             <tr class="form-group">
               <th><label for="hook_id" class="form-label">Hook Id </label></th>
-              <td><input type="text" disabled id="hook_id" class="form-input" placeholder="Generating id ..."></td>
+              <td>
+                <div class="row-overlay">
+                  <input type="text" disabled id="hook_id" class="form-input" placeholder="Generating id ...">
+                  <i class="fa-solid fa-rotate" id="js-refresh-id"></i>
+                </div>
+              </td>
             </tr>
             <tr class="form-group">
               <th><label for="hook_name" class="form-label">Hook Name <span class="text-alert">*</span></label></th>
@@ -90,11 +95,12 @@
   <!-- Main script -->
   <script>
     (() => {
-      const handleGetDomEle = (selector) => document.querySelectorAll(selector);
+      const handleGetDomEles = (selector) => document.querySelectorAll(selector);
       const API_URL = '/api/web-hook';
 
       window.addEventListener('load', () => {
-        const statusInputEle = handleGetDomEle('input[name=status]');
+        // Update status action
+        const statusInputEle = handleGetDomEles('input[name=status]');
         statusInputEle.forEach((element) => {
           element.addEventListener('change', async (e) => {
             const {
@@ -119,6 +125,48 @@
             }
           })
         })
+
+        // Delete hook action
+        const deleteBtnEles = handleGetDomEles('.js-delete-btn');
+
+        deleteBtnEles.forEach((element) => {
+          element.addEventListener('click', async (e) => {
+            const {
+              target
+            } = e;
+            const confirm = window.confirm('Are you sure?')
+            if (!confirm) return
+
+            const data = {
+              hook_id: target.dataset.hookId
+            };
+            const config = {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            };
+
+            try {
+              const {
+                acknowledged,
+                deletedCount
+              } = await (await fetch('/api/web-hook', config)).json();
+
+              if (acknowledged || deletedCount) {
+                location.reload();
+              } else {
+                console.log({
+                  acknowledged,
+                  deletedCount
+                });
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          })
+        })
       })
     })()
   </script>
@@ -140,10 +188,18 @@
         const formInputNameEle = handleGetDomEle('[id="hook_name"]');
         const formInputTriggerSiteEle = handleGetDomEle('[id="hook_trigger_url"]');
         const formInputStatusEle = handleGetDomEle('[id="hook_status"]');
+        const refreshIdEle = handleGetDomEle('#js-refresh-id');
         formInputIdEle.value = generateId;
 
         const formSubmitBtnEle = handleGetDomEle('#js-form-submit');
         const formCancelBtnEle = handleGetDomEle('#js-form-cancel');
+
+        refreshIdEle.addEventListener('click', async (e) => {
+          e.target.classList.add('fa-spin')
+          const newId = await handleGenerateId()
+          formInputIdEle.value = newId;
+          e.target.classList.remove('fa-spin')
+        })
 
         modalActionEle.addEventListener('click', async (e) => {
           e.preventDefault();

@@ -204,3 +204,15 @@ input[disabled] {
 .form-message.active {
     display: block;
 }
+
+.row-overlay {
+    position: relative;
+}
+
+.row-overlay i {
+    position: absolute;
+    right: 20px;
+    line-height: 58px;
+    cursor: pointer;
+    font-size: 1.1em;
+}
